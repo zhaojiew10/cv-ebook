@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
+  <title id="title">前向计算、损失、反向梯度与参数更新闭环</title>
+  <desc id="desc">一个小批量依次经过前向计算、损失计算、反向传播求梯度和优化器更新参数，更新后的参数再进入下一次前向计算。外圈箭头按顺时针方向表示训练闭环。</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#d97706"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#7c3aed"/>
+    </marker>
+    <marker id="arrow-teal" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#0f766e"/>
+    </marker>
+    <style>
+      text { font-family: "Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif; fill: #0f172a; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .box-title { font-size: 25px; font-weight: 700; }
+      .main { font-size: 22px; font-weight: 600; }
+      .note { font-size: 18px; fill: #475569; }
+      .arrow-label { font-size: 18px; font-weight: 600; }
+      .code { font-family: Consolas,"Courier New",monospace; font-size: 21px; fill: #0f172a; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="660" fill="#f8fafc"/>
+  <text class="title" x="600" y="48" text-anchor="middle">从预测到参数更新：一个小批量的学习闭环</text>
+  <text class="subtitle" x="600" y="80" text-anchor="middle">实线箭头依次表示预测值、标量损失、梯度与更新后参数的流向</text>
+
+  <rect x="110" y="125" width="350" height="145" rx="16" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+  <rect x="740" y="125" width="350" height="145" rx="16" fill="#fff7ed" stroke="#d97706" stroke-width="2.5"/>
+  <rect x="740" y="390" width="350" height="145" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2.5"/>
+  <rect x="110" y="390" width="350" height="145" rx="16" fill="#f0fdfa" stroke="#0f766e" stroke-width="2.5"/>
+
+  <text class="box-title" x="285" y="165" text-anchor="middle" fill="#2563eb">① 前向计算</text>
+  <text class="main" x="285" y="207" text-anchor="middle">x → model(x) → ŷ</text>
+  <text class="note" x="285" y="244" text-anchor="middle">使用当前参数 θ 产生预测</text>
+
+  <text class="box-title" x="915" y="165" text-anchor="middle" fill="#d97706">② 计算损失</text>
+  <text class="main" x="915" y="207" text-anchor="middle">L = loss(ŷ, y)</text>
+  <text class="note" x="915" y="244" text-anchor="middle">比较预测与真实标签，得到标量</text>
+
+  <text class="box-title" x="915" y="430" text-anchor="middle" fill="#7c3aed">③ 反向求梯度</text>
+  <text class="code" x="915" y="472" text-anchor="middle">loss.backward()</text>
+  <text class="note" x="915" y="509" text-anchor="middle">沿计算图应用链式法则，得到 ∂L/∂θ</text>
+
+  <text class="box-title" x="285" y="430" text-anchor="middle" fill="#0f766e">④ 优化器更新</text>
+  <text class="code" x="285" y="472" text-anchor="middle">optimizer.step()</text>
+  <text class="note" x="285" y="509" text-anchor="middle">依据梯度与学习率调整权重和偏置</text>
+
+  <path d="M460 198 H740" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-blue)"/>
+  <text class="arrow-label" x="600" y="181" text-anchor="middle" fill="#2563eb">预测 ŷ</text>
+  <path d="M915 270 V390" fill="none" stroke="#d97706" stroke-width="3" marker-end="url(#arrow-purple)"/>
+  <text class="arrow-label" x="938" y="327" fill="#7c3aed">从标量 L 出发</text>
+  <text class="arrow-label" x="938" y="353" fill="#7c3aed">梯度反向流动</text>
+  <path d="M740 463 H460" fill="none" stroke="#7c3aed" stroke-width="3" marker-end="url(#arrow-teal)"/>
+  <text class="arrow-label" x="600" y="446" text-anchor="middle" fill="#0f766e">参数梯度 ∂L/∂θ</text>
+  <path d="M285 390 V270" fill="none" stroke="#0f766e" stroke-width="3" marker-end="url(#arrow-blue)"/>
+  <text class="arrow-label" x="262" y="327" text-anchor="end" fill="#2563eb">更新后的 θ</text>
+  <text class="arrow-label" x="262" y="353" text-anchor="end" fill="#2563eb">进入下一次前向</text>
+
+  <rect x="500" y="292" width="200" height="82" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="7 5"/>
+  <text class="main" x="600" y="326" text-anchor="middle">同一个小批量</text>
+  <text class="note" x="600" y="355" text-anchor="middle">按 ① → ② → ③ → ④</text>
+
+  <rect x="110" y="575" width="980" height="55" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text class="subtitle" x="600" y="610" text-anchor="middle">批次不断重复这一闭环；训练集的全部批次处理完毕，才构成一个 epoch。</text>
+</svg>

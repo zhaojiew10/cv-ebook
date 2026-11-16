@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Pre-Norm ViT 编码层的两条残差路径</title>
+  <desc id="desc">ViT 第 l 层依次执行输入 Z 经 LayerNorm、多头自注意力、第一次残差相加，再经 LayerNorm、逐 token MLP、第二次残差相加。左面板给出 Z 到 Z 一撇的注意力子层，右面板给出 Z 一撇到 Z_l 的 MLP 子层；灰色旁路表示恒等输入直接汇入加法节点。</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+    <style>
+      text { font-family: "Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif; fill: #0f172a; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .panel-title { font-size: 24px; font-weight: 700; }
+      .subtitle { font-size: 17px; fill: #475569; }
+      .label { font-size: 19px; }
+      .small { font-size: 16px; fill: #475569; }
+      .formula { font-size: 19px; font-weight: 700; }
+      .flow { fill: none; stroke: #2563eb; stroke-width: 2.5; marker-end: url(#arrow-blue); }
+      .residual { fill: none; stroke: #475569; stroke-width: 2.4; marker-end: url(#arrow-gray); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+  <text x="32" y="50" font-size="32" font-weight="700">Pre-Norm ViT 编码层：先归一化，再变换，最后加回原输入</text>
+  <text x="32" y="84" font-size="19" fill="#475569">蓝色主路径更新表示｜灰色恒等旁路保留原信息并提供直接梯度通路｜每个子层输出形状保持 M×D</text>
+
+  <!-- 第一子层：LN → MSA → 残差相加 -->
+  <rect class="panel" x="32" y="116" width="552" height="546" rx="16"/>
+  <rect x="32" y="116" width="8" height="546" rx="4" fill="#2563eb"/>
+  <text class="panel-title" x="56" y="153">① 注意力子层：token 间交换信息</text>
+  <text class="subtitle" x="308" y="178" text-anchor="middle">Zₗ₋₁ → LN → MSA → 与 Zₗ₋₁ 残差相加</text>
+
+  <rect x="228" y="202" width="160" height="52" rx="11" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="formula" x="308" y="234" text-anchor="middle" fill="#1d4ed8">输入 Zₗ₋₁</text>
+  <rect x="188" y="286" width="240" height="58" rx="11" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text class="label" x="308" y="311" text-anchor="middle" font-weight="700">LayerNorm（LN）</text>
+  <text class="small" x="308" y="333" text-anchor="middle">按每个 token 的特征维归一化</text>
+  <rect x="198" y="376" width="220" height="68" rx="11" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text class="label" x="308" y="403" text-anchor="middle" font-weight="700">多头自注意力 MSA</text>
+  <text class="small" x="308" y="428" text-anchor="middle">多头 QKV 关系建模与信息聚合</text>
+
+  <path class="flow" d="M 308 254 V 280"/>
+  <path class="flow" d="M 308 344 V 370"/>
+  <path class="flow" d="M 308 444 V 474"/>
+  <circle cx="308" cy="502" r="26" fill="#ffffff" stroke="#2563eb" stroke-width="2.5"/>
+  <text x="308" y="512" text-anchor="middle" font-size="30" font-weight="700" fill="#2563eb">+</text>
+
+  <path class="residual" d="M 228 228 H 112 V 502 H 276"/>
+  <circle cx="228" cy="228" r="4" fill="#475569"/>
+  <text class="label" x="64" y="548" font-weight="700" fill="#475569">恒等残差</text>
+  <text class="small" x="64" y="572">原始 Zₗ₋₁</text>
+  <text class="small" x="64" y="596">绕过 LN 与 MSA</text>
+  <text class="small" x="64" y="620">直接汇入加法</text>
+
+  <rect x="218" y="558" width="180" height="54" rx="11" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text class="formula" x="308" y="592" text-anchor="middle" fill="#1d4ed8">输出 Z′ₗ</text>
+  <path class="flow" d="M 308 528 V 552"/>
+  <text class="small" x="308" y="639" text-anchor="middle">注意力更新数值，但序列长度与隐藏维不变</text>
+
+  <!-- 第二子层：LN → MLP → 残差相加 -->
+  <rect class="panel" x="616" y="116" width="552" height="546" rx="16"/>
+  <rect x="616" y="116" width="8" height="546" rx="4" fill="#0f766e"/>
+  <text class="panel-title" x="640" y="153">② MLP 子层：逐 token 非线性变换</text>
+  <text class="subtitle" x="892" y="178" text-anchor="middle">Z′ₗ → LN → MLP → 与 Z′ₗ 残差相加</text>
+
+  <rect x="812" y="202" width="160" height="52" rx="11" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text class="formula" x="892" y="234" text-anchor="middle" fill="#0f766e">输入 Z′ₗ</text>
+  <rect x="772" y="286" width="240" height="58" rx="11" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text class="label" x="892" y="311" text-anchor="middle" font-weight="700">LayerNorm（LN）</text>
+  <text class="small" x="892" y="333" text-anchor="middle">第二次独立归一化</text>
+  <rect x="782" y="366" width="220" height="80" rx="11" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+  <text class="label" x="892" y="391" text-anchor="middle" font-weight="700">逐 token MLP</text>
+  <text class="small" x="892" y="416" text-anchor="middle">Linear → GELU → Linear</text>
+  <text class="small" x="892" y="439" text-anchor="middle">维度：D → 4D → D</text>
+
+  <path class="flow" d="M 892 254 V 280"/>
+  <path class="flow" d="M 892 344 V 360"/>
+  <path class="flow" d="M 892 446 V 474"/>
+  <circle cx="892" cy="502" r="26" fill="#ffffff" stroke="#0f766e" stroke-width="2.5"/>
+  <text x="892" y="512" text-anchor="middle" font-size="30" font-weight="700" fill="#0f766e">+</text>
+
+  <path class="residual" d="M 972 228 H 1088 V 502 H 924"/>
+  <circle cx="972" cy="228" r="4" fill="#475569"/>
+  <text class="label" x="1004" y="548" font-weight="700" fill="#475569">恒等残差</text>
+  <text class="small" x="1004" y="572">中间量 Z′ₗ</text>
+  <text class="small" x="1004" y="596">绕过 LN 与 MLP</text>
+  <text class="small" x="1004" y="620">直接汇入加法</text>
+
+  <rect x="802" y="558" width="180" height="54" rx="11" fill="#ccfbf1" stroke="#0f766e" stroke-width="2"/>
+  <text class="formula" x="892" y="592" text-anchor="middle" fill="#0f766e">输出 Zₗ</text>
+  <path class="flow" d="M 892 528 V 552"/>
+  <text class="small" x="892" y="639" text-anchor="middle">MLP 不直接跨 token 通信，只变换各 token 内部特征</text>
+
+  <rect x="32" y="684" width="1136" height="52" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text class="formula" x="600" y="717" text-anchor="middle">Z′ₗ = Zₗ₋₁ + MSA(LN(Zₗ₋₁))　　｜　　Zₗ = Z′ₗ + MLP(LN(Z′ₗ))</text>
+</svg>

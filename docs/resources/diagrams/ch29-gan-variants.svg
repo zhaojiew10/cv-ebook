@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">WGAN、StyleGAN 与 CycleGAN 的结构性差异</title>
+  <desc id="desc">三个面板分别展示 WGAN 用线性评论家和 Wasserstein 评分差改造优化目标，StyleGAN 用八层映射网络得到 w 并向粗、中、细分辨率合成层注入 AdaIN 样式与随机噪声，CycleGAN 用两个生成器和两个判别器构成双向转换，并以循环一致性恢复原输入。</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed"/>
+    </marker>
+    <style>
+      text { font-family: "Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif; fill: #0f172a; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .panel-title { font-size: 24px; font-weight: 700; }
+      .subtitle { font-size: 17px; fill: #475569; }
+      .label { font-size: 18px; }
+      .small { font-size: 16px; fill: #475569; }
+      .formula { font-size: 18px; font-weight: 700; }
+      .flow { fill: none; stroke: #2563eb; stroke-width: 2.4; marker-end: url(#arrow-blue); }
+      .flow-gray { fill: none; stroke: #475569; stroke-width: 2.1; marker-end: url(#arrow-gray); }
+      .flow-purple { fill: none; stroke: #7c3aed; stroke-width: 2.4; marker-end: url(#arrow-purple); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+  <text x="32" y="50" font-size="32" font-weight="700">三种 GAN 变体：改造的不是同一个环节</text>
+  <text x="32" y="84" font-size="19" fill="#475569">WGAN 改优化信号｜StyleGAN 改潜在表示与合成结构｜CycleGAN 改双向架构与数据约束</text>
+
+  <!-- WGAN：优化目标与评论家约束 -->
+  <rect class="panel" x="32" y="116" width="368" height="608" rx="16"/>
+  <rect x="32" y="116" width="8" height="608" rx="4" fill="#2563eb"/>
+  <text class="panel-title" x="56" y="154">WGAN｜优化目标</text>
+  <text class="subtitle" x="56" y="183">线性评论家输出实数，不输出真假概率</text>
+
+  <rect x="52" y="212" width="108" height="50" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="106" y="243" text-anchor="middle">噪声 z</text>
+  <rect x="220" y="212" width="148" height="50" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="294" y="243" text-anchor="middle">生成器 G</text>
+  <path class="flow" d="M 160 237 H 214"/>
+
+  <rect x="52" y="296" width="136" height="54" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text class="label" x="120" y="329" text-anchor="middle">真实样本 x</text>
+  <rect x="220" y="296" width="148" height="54" rx="10" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+  <text class="label" x="294" y="329" text-anchor="middle">生成样本 G(z)</text>
+  <path class="flow" d="M 294 262 V 290"/>
+
+  <path class="flow-gray" d="M 120 350 V 374 H 176 V 396"/>
+  <path class="flow-gray" d="M 294 350 V 374 H 252 V 396"/>
+  <rect x="116" y="402" width="200" height="66" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text class="label" x="216" y="429" text-anchor="middle">线性评论家 f</text>
+  <text class="small" x="216" y="454" text-anchor="middle">无 Sigmoid，分数无界</text>
+
+  <rect x="52" y="496" width="316" height="72" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="formula" x="216" y="525" text-anchor="middle" fill="#1d4ed8">E[f(x)] − E[f(G(z))]</text>
+  <text class="small" x="216" y="551" text-anchor="middle">拉高真实分数、压低生成分数</text>
+  <path class="flow" d="M 216 468 V 490"/>
+
+  <rect x="52" y="590" width="316" height="82" rx="12" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+  <text class="label" x="216" y="620" text-anchor="middle" font-weight="700" fill="#b45309">Lipschitz 约束</text>
+  <text class="small" x="216" y="646" text-anchor="middle">权重裁剪，或以梯度惩罚</text>
+  <text class="small" x="216" y="666" text-anchor="middle">鼓励梯度范数接近 1</text>
+  <text class="small" x="216" y="701" text-anchor="middle">关键变化：分布距离与优化信号</text>
+
+  <!-- StyleGAN：映射网络与分层样式注入 -->
+  <rect class="panel" x="416" y="116" width="368" height="608" rx="16"/>
+  <rect x="416" y="116" width="8" height="608" rx="4" fill="#7c3aed"/>
+  <text class="panel-title" x="440" y="154">StyleGAN｜生成结构</text>
+  <text class="subtitle" x="440" y="183">先解耦 z → w，再按尺度注入样式</text>
+
+  <rect x="440" y="212" width="74" height="50" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text class="label" x="477" y="243" text-anchor="middle">z ∈ Z</text>
+  <rect x="560" y="212" width="184" height="50" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text class="label" x="652" y="243" text-anchor="middle">8 层映射 MLP</text>
+  <path class="flow-purple" d="M 514 237 H 554"/>
+  <rect x="540" y="286" width="176" height="48" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text class="label" x="628" y="316" text-anchor="middle">中间潜在 w ∈ W</text>
+  <path class="flow-purple" d="M 652 262 V 272 H 628 V 280"/>
+
+  <path class="flow-purple" d="M 540 310 H 520 V 376 H 534"/>
+  <path class="flow-purple" d="M 520 376 V 464 H 534"/>
+  <path class="flow-purple" d="M 520 464 V 552 H 534"/>
+  <text class="small" x="452" y="365">样式 w</text>
+  <text class="small" x="452" y="387">逐层变换</text>
+
+  <rect x="540" y="352" width="176" height="58" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text class="label" x="628" y="376" text-anchor="middle">粗分辨率合成</text>
+  <text class="small" x="628" y="399" text-anchor="middle">AdaIN｜姿态、脸型</text>
+  <rect x="540" y="440" width="176" height="58" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text class="label" x="628" y="464" text-anchor="middle">中分辨率合成</text>
+  <text class="small" x="628" y="487" text-anchor="middle">AdaIN｜局部特征</text>
+  <rect x="540" y="528" width="176" height="58" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text class="label" x="628" y="552" text-anchor="middle">细分辨率合成</text>
+  <text class="small" x="628" y="575" text-anchor="middle">AdaIN｜颜色、纹理</text>
+  <path class="flow-purple" d="M 628 410 V 434"/>
+  <path class="flow-purple" d="M 628 498 V 522"/>
+
+  <g fill="#fff7ed" stroke="#d97706" stroke-width="1.8">
+    <circle cx="744" cy="381" r="17"/>
+    <circle cx="744" cy="469" r="17"/>
+    <circle cx="744" cy="557" r="17"/>
+  </g>
+  <g font-size="16" text-anchor="middle" fill="#b45309">
+    <text x="744" y="387">ε₁</text>
+    <text x="744" y="475">ε₂</text>
+    <text x="744" y="563">ε₃</text>
+  </g>
+  <path class="flow-gray" d="M 727 381 H 722"/>
+  <path class="flow-gray" d="M 727 469 H 722"/>
+  <path class="flow-gray" d="M 727 557 H 722"/>
+
+  <rect x="540" y="620" width="176" height="52" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text class="label" x="628" y="652" text-anchor="middle">生成图像</text>
+  <path class="flow-purple" d="M 628 586 V 614"/>
+  <text class="small" x="600" y="701" text-anchor="middle">关键变化：多尺度样式控制与随机细节</text>
+
+  <!-- CycleGAN：双向生成、双判别器与循环一致性 -->
+  <rect class="panel" x="800" y="116" width="368" height="608" rx="16"/>
+  <rect x="800" y="116" width="8" height="608" rx="4" fill="#0f766e"/>
+  <text class="panel-title" x="824" y="154">CycleGAN｜数据约束</text>
+  <text class="subtitle" x="824" y="183">无配对域转换：双向生成与循环还原</text>
+
+  <rect x="944" y="202" width="88" height="46" rx="10" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text class="label" x="988" y="231" text-anchor="middle">生成器 G</text>
+  <rect x="824" y="274" width="132" height="56" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="890" y="297" text-anchor="middle">域 X：x</text>
+  <text class="small" x="890" y="319" text-anchor="middle">例如马</text>
+  <rect x="1004" y="274" width="132" height="56" rx="10" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+  <text class="label" x="1070" y="297" text-anchor="middle">域 Y：G(x)</text>
+  <text class="small" x="1070" y="319" text-anchor="middle">例如斑马外观</text>
+  <rect x="944" y="366" width="88" height="46" rx="10" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text class="label" x="988" y="395" text-anchor="middle">生成器 F</text>
+
+  <path class="flow" d="M 890 274 V 258 H 920 V 225 H 938"/>
+  <path class="flow" d="M 1032 225 H 1070 V 268"/>
+  <path class="flow" d="M 1070 330 V 389 H 1038"/>
+  <path class="flow" d="M 944 389 H 890 V 336"/>
+  <text class="small" x="988" y="435" text-anchor="middle">F(G(x)) ≈ x：往返后恢复原输入</text>
+
+  <rect x="824" y="458" width="140" height="54" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text class="label" x="894" y="491" text-anchor="middle">判别器 D_X</text>
+  <rect x="996" y="458" width="140" height="54" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text class="label" x="1066" y="491" text-anchor="middle">判别器 D_Y</text>
+  <path class="flow-gray" d="M 850 330 V 445 H 894 V 452"/>
+  <path class="flow-gray" d="M 1110 330 V 445 H 1066 V 452"/>
+
+  <rect x="824" y="538" width="312" height="58" rx="10" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text class="small" x="980" y="563" text-anchor="middle">另一方向：y → F(y) → G(F(y)) ≈ y</text>
+  <text class="small" x="980" y="586" text-anchor="middle">两个生成器与两个判别器共同训练</text>
+  <rect x="824" y="618" width="312" height="62" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="formula" x="980" y="645" text-anchor="middle" fill="#1d4ed8">双向对抗损失 + λ_cyc 循环损失</text>
+  <text class="small" x="980" y="668" text-anchor="middle">像目标域，同时保留可往返内容</text>
+  <text class="small" x="984" y="701" text-anchor="middle">关键变化：无配对监督与循环一致性</text>
+</svg>

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">训练批次与逐轮评估的完整流程</title>
+  <desc id="desc">每一轮先切换训练模式并遍历训练加载器，每批依次清除梯度、前向与损失、反向传播、优化器更新并累计指标。全部批次完成后先推进学习率调度器，再切换评估模式，在不计算梯度的环境中遍历评估加载器并记录指标，随后进入下一轮。</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#d97706"/>
+    </marker>
+    <marker id="arrow-teal" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#0f766e"/>
+    </marker>
+    <style>
+      text { font-family: "Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif; fill: #0f172a; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .section { font-size: 23px; font-weight: 700; }
+      .box-title { font-size: 19px; font-weight: 700; }
+      .code { font-family: Consolas,"Courier New",monospace; font-size: 17px; fill: #334155; }
+      .note { font-size: 17px; fill: #475569; }
+      .small { font-size: 16px; fill: #475569; }
+      .flow { fill: none; stroke: #64748b; stroke-width: 2.4; marker-end: url(#arrow-gray); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+  <text class="title" x="600" y="43" text-anchor="middle">PyTorch 训练批次与逐轮评估</text>
+  <text class="subtitle" x="600" y="75" text-anchor="middle">先完成本轮全部训练批次，再推进 scheduler，最后评估并记录指标</text>
+
+  <rect x="45" y="100" width="1110" height="600" rx="18" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8 6"/>
+  <text class="section" x="68" y="130">每一个 epoch</text>
+  <text class="note" x="1132" y="130" text-anchor="end">下一轮重新调用 model.train()</text>
+
+  <rect x="65" y="145" width="1070" height="250" rx="16" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+  <text class="section" x="88" y="179" fill="#2563eb">训练批次｜model.train()</text>
+  <text class="note" x="1110" y="179" text-anchor="end">以下步骤对 train_loader 中的每个批次按序执行</text>
+
+  <rect x="85" y="225" width="145" height="95" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="255" y="225" width="150" height="95" rx="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+  <rect x="430" y="225" width="175" height="95" rx="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+  <rect x="630" y="225" width="150" height="95" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+  <rect x="805" y="225" width="150" height="95" rx="12" fill="#ffffff" stroke="#0f766e" stroke-width="2"/>
+  <rect x="980" y="225" width="135" height="95" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+
+  <text class="box-title" x="157" y="258" text-anchor="middle">取一个批次</text>
+  <text class="code" x="157" y="291" text-anchor="middle">images, labels</text>
+  <text class="box-title" x="330" y="253" text-anchor="middle">① 清除梯度</text>
+  <text class="code" x="330" y="287" text-anchor="middle">zero_grad()</text>
+  <text class="box-title" x="517" y="253" text-anchor="middle">② 前向与损失</text>
+  <text class="code" x="517" y="287" text-anchor="middle">logits → loss</text>
+  <text class="box-title" x="705" y="253" text-anchor="middle">③ 反向传播</text>
+  <text class="code" x="705" y="287" text-anchor="middle">backward()</text>
+  <text class="box-title" x="880" y="253" text-anchor="middle">④ 更新参数</text>
+  <text class="code" x="880" y="287" text-anchor="middle">step()</text>
+  <text class="box-title" x="1047" y="253" text-anchor="middle">累计指标</text>
+  <text class="code" x="1047" y="287" text-anchor="middle">loss / acc</text>
+
+  <path class="flow" d="M230 272 H250"/>
+  <path d="M405 272 H425" fill="none" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+  <path d="M605 272 H625" fill="none" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+  <path d="M780 272 H800" fill="none" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+  <path d="M955 272 H975" fill="none" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+  <path d="M1047 320 V358 H157 V325" fill="none" stroke="#64748b" stroke-width="2.2" marker-end="url(#arrow-gray)"/>
+  <text class="note" x="600" y="382" text-anchor="middle">还有批次：返回并处理下一批</text>
+
+  <path d="M600 395 V425" fill="none" stroke="#d97706" stroke-width="2.8" marker-end="url(#arrow-orange)"/>
+  <rect x="325" y="425" width="550" height="65" rx="14" fill="#fff7ed" stroke="#d97706" stroke-width="2.5"/>
+  <text class="box-title" x="600" y="452" text-anchor="middle" fill="#d97706">⑤ scheduler.step()</text>
+  <text class="note" x="600" y="478" text-anchor="middle">全部训练批次完成后、评估前；每轮一次</text>
+
+  <path d="M600 490 V510" fill="none" stroke="#0f766e" stroke-width="2.8" marker-end="url(#arrow-teal)"/>
+  <rect x="65" y="510" width="1070" height="165" rx="16" fill="#f0fdfa" stroke="#0f766e" stroke-width="2.5"/>
+  <text class="section" x="88" y="542" fill="#0f766e">逐轮评估｜model.eval() ＋ torch.no_grad()</text>
+  <text class="note" x="1110" y="542" text-anchor="end">评估加载器：验证集或测试集</text>
+
+  <rect x="110" y="558" width="230" height="62" rx="12" fill="#ffffff" stroke="#0f766e" stroke-width="2"/>
+  <rect x="405" y="558" width="230" height="62" rx="12" fill="#ffffff" stroke="#0f766e" stroke-width="2"/>
+  <rect x="700" y="558" width="230" height="62" rx="12" fill="#ffffff" stroke="#0f766e" stroke-width="2"/>
+  <rect x="980" y="558" width="110" height="62" rx="12" fill="#ffffff" stroke="#0f766e" stroke-width="2"/>
+  <text class="box-title" x="225" y="597" text-anchor="middle">遍历评估批次</text>
+  <text class="box-title" x="520" y="597" text-anchor="middle">前向＋损失</text>
+  <text class="box-title" x="815" y="597" text-anchor="middle">累计并返回指标</text>
+  <text class="box-title" x="1035" y="597" text-anchor="middle">记录结果</text>
+  <path class="flow" d="M340 589 H400"/>
+  <path class="flow" d="M635 589 H695"/>
+  <path class="flow" d="M930 589 H975"/>
+  <text class="note" x="600" y="652" text-anchor="middle">评估中不调用 backward()，不执行 optimizer.step()，参数不更新</text>
+
+  <path d="M1035 620 V725 H25 V272 H80" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+  <text class="subtitle" x="600" y="750" text-anchor="middle">保存本轮指标后进入下一 epoch</text>
+</svg>

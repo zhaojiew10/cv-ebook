@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">IVF、PQ 与 HNSW 的三种近似检索机制</title>
+  <desc id="desc">左面板展示 IVF 将向量分配到质心对应的倒排列表，查询只探测部分簇；中面板展示 PQ 将 512 维向量分成八段子向量，各用独立码本的质心编号表示；右面板展示 HNSW 从稀疏上层入口逐层下降到密集底层，沿图边导航到近邻。三者分别减少候选、压缩向量和组织图遍历。</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a"/>
+    </marker>
+    <style>
+      text { font-family: "Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif; fill: #0f172a; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .panel-title { font-size: 24px; font-weight: 700; }
+      .subtitle { font-size: 17px; fill: #475569; }
+      .label { font-size: 18px; }
+      .small { font-size: 16px; fill: #475569; }
+      .formula { font-size: 18px; font-weight: 700; }
+      .flow { fill: none; stroke: #2563eb; stroke-width: 2.3; marker-end: url(#arrow-blue); }
+      .flow-gray { fill: none; stroke: #475569; stroke-width: 1.9; marker-end: url(#arrow-gray); }
+      .flow-green { fill: none; stroke: #16a34a; stroke-width: 2.6; marker-end: url(#arrow-green); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+  <text x="32" y="50" font-size="32" font-weight="700">大规模 ANN 索引：少扫描、少存储、沿图高效导航</text>
+  <text x="32" y="84" font-size="19" fill="#475569">IVF 控制候选范围｜PQ 用子向量码本压缩表示｜HNSW 用多层邻接图逐级缩小搜索区域</text>
+
+  <!-- IVF：质心分区与倒排列表 -->
+  <rect class="panel" x="32" y="116" width="368" height="608" rx="16"/>
+  <rect x="32" y="116" width="8" height="608" rx="4" fill="#2563eb"/>
+  <text class="panel-title" x="56" y="154">IVF｜簇与倒排列表</text>
+  <text class="subtitle" x="56" y="183">先找近质心，只扫描选中的列表</text>
+
+  <circle cx="216" cy="222" r="23" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+  <text class="formula" x="216" y="229" text-anchor="middle" fill="#1d4ed8">q</text>
+  <text class="small" x="254" y="228">查询向量</text>
+
+  <path class="flow-green" d="M 197 238 L 102 270"/>
+  <path class="flow-green" d="M 216 245 V 264"/>
+  <path class="flow-gray" d="M 235 238 L 326 270"/>
+  <g stroke-width="2.5">
+    <circle cx="92" cy="292" r="21" fill="#f0fdf4" stroke="#16a34a"/>
+    <circle cx="216" cy="292" r="21" fill="#f0fdf4" stroke="#16a34a"/>
+    <circle cx="340" cy="292" r="21" fill="#f1f5f9" stroke="#94a3b8"/>
+  </g>
+  <g class="label" text-anchor="middle" font-weight="700">
+    <text x="92" y="299" fill="#15803d">c₁</text>
+    <text x="216" y="299" fill="#15803d">c₂</text>
+    <text x="340" y="299" fill="#64748b">c₃</text>
+  </g>
+  <g class="small" text-anchor="middle">
+    <text x="92" y="333">质心 1</text>
+    <text x="216" y="333">质心 2</text>
+    <text x="340" y="333">质心 3</text>
+  </g>
+
+  <g stroke-width="2">
+    <rect x="48" y="356" width="88" height="52" rx="8" fill="#f0fdf4" stroke="#16a34a"/>
+    <rect x="48" y="420" width="88" height="52" rx="8" fill="#f0fdf4" stroke="#16a34a"/>
+    <rect x="172" y="356" width="88" height="52" rx="8" fill="#f0fdf4" stroke="#16a34a"/>
+    <rect x="172" y="420" width="88" height="52" rx="8" fill="#f0fdf4" stroke="#16a34a"/>
+    <rect x="296" y="356" width="88" height="52" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+    <rect x="296" y="420" width="88" height="52" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+  </g>
+  <g class="small" text-anchor="middle">
+    <text x="92" y="378">列表 1</text><text x="92" y="399">x₁，x₄</text>
+    <text x="92" y="442">向量与 ID</text><text x="92" y="463">继续排列</text>
+    <text x="216" y="378">列表 2</text><text x="216" y="399">x₂，x₇</text>
+    <text x="216" y="442">向量与 ID</text><text x="216" y="463">继续排列</text>
+    <text x="340" y="378">列表 3</text><text x="340" y="399">x₃，x₉</text>
+    <text x="340" y="442">未选中</text><text x="340" y="463">本轮不扫描</text>
+  </g>
+
+  <rect x="52" y="504" width="316" height="66" rx="11" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text class="label" x="210" y="532" text-anchor="middle" font-weight="700" fill="#15803d">nlist = 3，nprobe = 2（示意）</text>
+  <text class="small" x="210" y="556" text-anchor="middle">绿色列表进入候选，灰色列表被跳过</text>
+  <rect x="52" y="592" width="316" height="80" rx="11" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="formula" x="210" y="622" text-anchor="middle" fill="#1d4ed8">扫描量 ≈ N × nprobe / nlist</text>
+  <text class="small" x="210" y="649" text-anchor="middle">增大 nprobe：更多候选，更高召回机会</text>
+
+  <!-- PQ：子向量、独立码本与紧凑编码 -->
+  <rect class="panel" x="416" y="116" width="368" height="608" rx="16"/>
+  <rect x="416" y="116" width="8" height="608" rx="4" fill="#7c3aed"/>
+  <text class="panel-title" x="440" y="154">PQ｜子向量码本</text>
+  <text class="subtitle" x="440" y="183">分段量化，用质心编号替代浮点值</text>
+
+  <text class="small" x="600" y="216" text-anchor="middle">512 维 float32 原向量：8 段 × 64 维</text>
+  <g stroke="#7c3aed" stroke-width="2">
+    <rect x="440" y="236" width="76" height="56" rx="8" fill="#f5f3ff"/>
+    <rect x="524" y="236" width="76" height="56" rx="8" fill="#f5f3ff"/>
+    <rect x="608" y="236" width="60" height="56" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+    <rect x="676" y="236" width="84" height="56" rx="8" fill="#f5f3ff"/>
+  </g>
+  <g class="small" text-anchor="middle">
+    <text x="478" y="259">子向量 1</text><text x="478" y="281">64 维</text>
+    <text x="562" y="259">子向量 2</text><text x="562" y="281">64 维</text>
+    <text x="638" y="270" font-size="22">…</text>
+    <text x="718" y="259">子向量 8</text><text x="718" y="281">64 维</text>
+  </g>
+
+  <path class="flow" d="M 478 292 V 326"/>
+  <path class="flow" d="M 562 292 V 326"/>
+  <path class="flow" d="M 718 292 V 326"/>
+  <g stroke-width="2">
+    <rect x="440" y="332" width="76" height="106" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <rect x="524" y="332" width="76" height="106" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <rect x="608" y="332" width="60" height="106" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+    <rect x="676" y="332" width="84" height="106" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+  </g>
+  <g class="small" text-anchor="middle">
+    <text x="478" y="357">子码本 1</text><text x="478" y="382">256 质心</text><text x="478" y="409">选中 17</text><text x="478" y="429">→ 1 字节</text>
+    <text x="562" y="357">子码本 2</text><text x="562" y="382">256 质心</text><text x="562" y="409">选中 203</text><text x="562" y="429">→ 1 字节</text>
+    <text x="638" y="392" font-size="22">…</text>
+    <text x="718" y="357">子码本 8</text><text x="718" y="382">256 质心</text><text x="718" y="409">选中 91</text><text x="718" y="429">→ 1 字节</text>
+  </g>
+
+  <path class="flow" d="M 478 438 V 476"/>
+  <path class="flow" d="M 562 438 V 476"/>
+  <path class="flow" d="M 718 438 V 476"/>
+  <g stroke="#7c3aed" stroke-width="2">
+    <rect x="440" y="482" width="76" height="52" rx="8" fill="#f5f3ff"/>
+    <rect x="524" y="482" width="76" height="52" rx="8" fill="#f5f3ff"/>
+    <rect x="608" y="482" width="60" height="52" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+    <rect x="676" y="482" width="84" height="52" rx="8" fill="#f5f3ff"/>
+  </g>
+  <g class="formula" text-anchor="middle" fill="#6d28d9">
+    <text x="478" y="515">17</text><text x="562" y="515">203</text><text x="638" y="515">…</text><text x="718" y="515">91</text>
+  </g>
+  <text class="small" x="600" y="560" text-anchor="middle">PQ 编码：[17，203，…，91]</text>
+
+  <rect x="440" y="588" width="320" height="84" rx="11" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text class="formula" x="600" y="617" text-anchor="middle" fill="#6d28d9">8 段 × 1 字节 = 8 字节／向量</text>
+  <text class="small" x="600" y="643" text-anchor="middle">查询预计算子距离表，再按编码查表累加</text>
+  <text class="small" x="600" y="665" text-anchor="middle">压缩有效载荷；码本与索引结构另占内存</text>
+
+  <!-- HNSW：多层邻接图导航 -->
+  <rect class="panel" x="800" y="116" width="368" height="608" rx="16"/>
+  <rect x="800" y="116" width="8" height="608" rx="4" fill="#0f766e"/>
+  <text class="panel-title" x="824" y="154">HNSW｜多层图导航</text>
+  <text class="subtitle" x="824" y="183">上层跨区域，下层在局部邻域精修</text>
+
+  <text class="small" x="824" y="224">上层：稀疏</text>
+  <text class="small" x="824" y="326">中层：过渡</text>
+  <text class="small" x="824" y="574">底层：密集</text>
+  <line x1="824" y1="292" x2="1144" y2="292" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="6 6"/>
+  <line x1="824" y1="446" x2="1144" y2="446" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="6 6"/>
+
+  <g fill="none" stroke="#94a3b8" stroke-width="2">
+    <path d="M 958 246 L 1070 246"/>
+    <path d="M 958 254 L 894 362 M 958 254 L 978 362 M 1070 254 L 1068 362 M 1070 254 L 1130 362"/>
+    <path d="M 888 374 L 972 374 L 1062 374 L 1130 374"/>
+    <path d="M 888 388 L 852 524 M 894 388 L 902 524 M 972 388 L 950 524 M 978 388 L 1008 524 M 1062 388 L 1058 524 M 1068 388 L 1110 524"/>
+    <path d="M 852 536 L 902 536 L 952 536 L 1008 536 L 1058 536 L 1110 536"/>
+    <path d="M 852 536 L 952 536 M 902 536 L 1008 536 M 1008 536 L 1110 536"/>
+  </g>
+  <path class="flow-green" d="M 958 254 L 972 348"/>
+  <path class="flow-green" d="M 978 388 L 1008 510"/>
+
+  <g fill="#ffffff" stroke="#64748b" stroke-width="2">
+    <circle cx="1070" cy="246" r="14"/>
+    <circle cx="888" cy="374" r="14"/><circle cx="1068" cy="374" r="14"/><circle cx="1130" cy="374" r="14"/>
+    <circle cx="852" cy="536" r="14"/><circle cx="902" cy="536" r="14"/><circle cx="952" cy="536" r="14"/>
+    <circle cx="1058" cy="536" r="14"/><circle cx="1110" cy="536" r="14"/>
+  </g>
+  <circle cx="958" cy="246" r="16" fill="#f0fdf4" stroke="#16a34a" stroke-width="3"/>
+  <circle cx="972" cy="374" r="16" fill="#f0fdf4" stroke="#16a34a" stroke-width="3"/>
+  <circle cx="1008" cy="536" r="18" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+  <circle cx="1008" cy="536" r="5" fill="#16a34a"/>
+  <text class="small" x="984" y="228" font-weight="700" fill="#15803d">入口</text>
+  <text class="small" x="1034" y="520" font-weight="700" fill="#15803d">近似近邻</text>
+
+  <path class="flow" d="M 1112 228 V 274 H 958 V 268"/>
+  <rect x="1080" y="188" width="64" height="40" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="1112" y="214" text-anchor="middle">查询 q</text>
+
+  <rect x="824" y="586" width="320" height="86" rx="11" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text class="label" x="984" y="615" text-anchor="middle" font-weight="700" fill="#0f766e">绿色路径：逐层走向更近节点</text>
+  <text class="small" x="984" y="641" text-anchor="middle">边连接邻近向量，导航依据是向量距离</text>
+  <text class="small" x="984" y="663" text-anchor="middle">上层快速缩小范围，底层细化候选</text>
+</svg>

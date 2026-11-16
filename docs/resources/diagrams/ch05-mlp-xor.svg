@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">XOR 输入空间与 2—4—1 MLP 隐藏表示</title>
+  <desc id="desc">左侧展示 XOR 四个样本在输入空间中线性不可分，中间展示两个输入、四个隐藏单元和一个输出单元的多层感知机，右侧示意非线性隐藏表示学习成功后可以由输出层进行线性划分。</desc>
+  <defs>
+    <marker id="arrow-gray" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2563eb"/>
+    </marker>
+    <style>
+      text { font-family: "Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif; fill: #0f172a; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .panel-title { font-size: 24px; font-weight: 700; }
+      .label { font-size: 20px; }
+      .small { font-size: 17px; fill: #475569; }
+      .tiny { font-size: 16px; fill: #475569; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .axis { fill: none; stroke: #64748b; stroke-width: 2; marker-end: url(#arrow-gray); }
+      .connection { fill: none; stroke: #94a3b8; stroke-width: 1.8; }
+      .code { font-family: Consolas,"Courier New",monospace; font-size: 17px; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="680" fill="#f8fafc"/>
+  <text class="title" x="600" y="48" text-anchor="middle">XOR：从线性不可分到可分的隐藏表示</text>
+  <text class="subtitle" x="600" y="80" text-anchor="middle">2—4—1 MLP 用“线性变换＋非线性激活”重组输入坐标</text>
+
+  <rect class="panel" x="40" y="110" width="330" height="490" rx="16"/>
+  <rect class="panel" x="405" y="110" width="390" height="490" rx="16"/>
+  <rect class="panel" x="830" y="110" width="330" height="490" rx="16"/>
+
+  <text class="panel-title" x="205" y="150" text-anchor="middle">① XOR 输入空间</text>
+  <circle cx="105" cy="180" r="9" fill="#2563eb"/>
+  <text class="small" x="122" y="186">目标 0</text>
+  <path d="M225 171 L234 180 L225 189 L216 180 Z" fill="#d97706"/>
+  <text class="small" x="243" y="186">目标 1</text>
+
+  <path class="axis" d="M90 450 H340"/>
+  <path class="axis" d="M90 450 V205"/>
+  <text class="label" x="326" y="482">x₁</text>
+  <text class="label" x="62" y="202">x₂</text>
+  <text class="tiny" x="120" y="476">0</text>
+  <text class="tiny" x="292" y="476">1</text>
+  <text class="tiny" x="70" y="417">0</text>
+  <text class="tiny" x="70" y="247">1</text>
+  <path d="M130 445 V455 M300 445 V455 M85 410 H95 M85 240 H95" stroke="#64748b" stroke-width="2"/>
+
+  <circle cx="130" cy="410" r="14" fill="#2563eb"/>
+  <text class="tiny" x="151" y="417">(0,0)</text>
+  <circle cx="300" cy="240" r="14" fill="#2563eb"/>
+  <text class="tiny" x="300" y="214" text-anchor="middle">(1,1)</text>
+  <path d="M130 225 L145 240 L130 255 L115 240 Z" fill="#d97706"/>
+  <text class="tiny" x="130" y="279" text-anchor="middle">(0,1)</text>
+  <path d="M300 395 L315 410 L300 425 L285 410 Z" fill="#d97706"/>
+  <text class="tiny" x="300" y="385" text-anchor="middle">(1,0)</text>
+
+  <text class="label" x="205" y="525" text-anchor="middle">同类点位于对角位置</text>
+  <text class="small" x="205" y="558" text-anchor="middle">单条直线无法完整分开两类</text>
+
+  <path d="M374 355 H397" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-blue)"/>
+  <path d="M799 355 H822" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-blue)"/>
+
+  <text class="panel-title" x="600" y="150" text-anchor="middle">② 2—4—1 MLP</text>
+  <text class="small" x="460" y="187" text-anchor="middle">输入：2</text>
+  <text class="small" x="600" y="187" text-anchor="middle">隐藏：4</text>
+  <text class="small" x="740" y="187" text-anchor="middle">输出：1</text>
+
+  <g class="connection">
+    <path d="M460 290 L600 220 M460 290 L600 300 M460 290 L600 380 M460 290 L600 460"/>
+    <path d="M460 390 L600 220 M460 390 L600 300 M460 390 L600 380 M460 390 L600 460"/>
+    <path d="M600 220 L740 340 M600 300 L740 340 M600 380 L740 340 M600 460 L740 340"/>
+  </g>
+  <g fill="#ffffff" stroke="#2563eb" stroke-width="3">
+    <circle cx="460" cy="290" r="25"/>
+    <circle cx="460" cy="390" r="25"/>
+  </g>
+  <g fill="#ffffff" stroke="#0f766e" stroke-width="3">
+    <circle cx="600" cy="220" r="25"/>
+    <circle cx="600" cy="300" r="25"/>
+    <circle cx="600" cy="380" r="25"/>
+    <circle cx="600" cy="460" r="25"/>
+  </g>
+  <circle cx="740" cy="340" r="29" fill="#ffffff" stroke="#7c3aed" stroke-width="3"/>
+  <g class="label" text-anchor="middle">
+    <text x="460" y="297">x₁</text>
+    <text x="460" y="397">x₂</text>
+    <text x="600" y="227">h₁</text>
+    <text x="600" y="307">h₂</text>
+    <text x="600" y="387">h₃</text>
+    <text x="600" y="467">h₄</text>
+    <text x="740" y="348">ŷ</text>
+  </g>
+  <path d="M445 505 H755" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+  <text class="tiny" x="600" y="497" text-anchor="middle">前向计算</text>
+  <text class="code" x="515" y="542" text-anchor="middle">Linear(2,4)</text>
+  <text class="small" x="515" y="570" text-anchor="middle">＋ ReLU</text>
+  <text class="code" x="685" y="542" text-anchor="middle">Linear(4,1)</text>
+  <text class="small" x="685" y="570" text-anchor="middle">＋ Sigmoid</text>
+
+  <text class="panel-title" x="995" y="150" text-anchor="middle">③ 隐藏表示（示意）</text>
+  <text class="tiny" x="995" y="179" text-anchor="middle">四维隐藏的二维投影，不代表具体训练数值</text>
+  <path class="axis" d="M885 450 H1125"/>
+  <path class="axis" d="M885 450 V205"/>
+  <text class="label" x="1110" y="482">h₁</text>
+  <text class="label" x="856" y="202">h₂</text>
+  <path d="M1018 215 V430" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="8 7"/>
+  <text class="tiny" x="1018" y="202" text-anchor="middle" fill="#7c3aed">输出层的线性划分</text>
+
+  <circle cx="950" cy="390" r="14" fill="#2563eb"/>
+  <circle cx="965" cy="275" r="14" fill="#2563eb"/>
+  <path d="M1080 375 L1095 390 L1080 405 L1065 390 Z" fill="#d97706"/>
+  <path d="M1085 260 L1100 275 L1085 290 L1070 275 Z" fill="#d97706"/>
+  <text class="small" x="950" y="236" text-anchor="middle" fill="#2563eb">目标 0</text>
+  <text class="small" x="1080" y="236" text-anchor="middle" fill="#d97706">目标 1</text>
+  <text class="label" x="995" y="525" text-anchor="middle">学习成功时，同类表示可归拢</text>
+  <text class="small" x="995" y="558" text-anchor="middle">输出层再组合隐藏单元完成分类</text>
+
+  <text class="subtitle" x="600" y="642" text-anchor="middle">关键不是增加一条手工规则，而是学习新的中间坐标；实际分类结果仍取决于损失与优化。</text>
+</svg>

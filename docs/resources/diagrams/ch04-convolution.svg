@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">卷积核滑动、局部乘加与输出响应</title>
+  <desc id="desc">以五乘五输入和三乘三垂直边缘核为例，蓝色实线窗口从输入左上角开始，橙色虚线窗口表示向右移动一格。当前窗口与卷积核逐元素相乘后求和得到五百七十，写入输出零行零列；窗口遍历有效位置后形成三乘三输出响应图。</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+    <style>
+      text { font-family: "Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif; fill: #0f172a; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .panel-title { font-size: 23px; font-weight: 700; }
+      .label { font-size: 18px; fill: #475569; }
+      .note { font-size: 16px; fill: #475569; }
+      .number { font-size: 20px; text-anchor: middle; dominant-baseline: middle; }
+      .index { font-size: 16px; fill: #475569; text-anchor: middle; dominant-baseline: middle; }
+      .grid { stroke: #cbd5e1; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="720" fill="#f8fafc"/>
+  <text x="40" y="50" font-size="32" font-weight="700">卷积核滑动、局部乘加与输出响应</text>
+  <text x="40" y="84" font-size="19" fill="#475569">示例：无填充、步长 s = 1；同一组核权重在所有空间位置复用</text>
+
+  <rect class="panel" x="32" y="116" width="390" height="474" rx="16"/>
+  <rect class="panel" x="446" y="116" width="218" height="474" rx="16"/>
+  <rect class="panel" x="688" y="116" width="270" height="474" rx="16"/>
+  <rect class="panel" x="982" y="116" width="186" height="474" rx="16"/>
+
+  <!-- 输入矩阵与两个相邻窗口 -->
+  <text class="panel-title" x="227" y="155" text-anchor="middle">① 输入 I：5×5</text>
+  <text class="label" x="218" y="184" text-anchor="middle">列 j →</text>
+  <text class="label" x="48" y="205">行 i ↓</text>
+  <g aria-label="列索引">
+    <text class="index" x="106" y="207">0</text><text class="index" x="162" y="207">1</text>
+    <text class="index" x="218" y="207">2</text><text class="index" x="274" y="207">3</text>
+    <text class="index" x="330" y="207">4</text>
+  </g>
+  <g aria-label="行索引">
+    <text class="index" x="62" y="248">0</text><text class="index" x="62" y="304">1</text>
+    <text class="index" x="62" y="360">2</text><text class="index" x="62" y="416">3</text>
+    <text class="index" x="62" y="472">4</text>
+  </g>
+  <g aria-label="五乘五输入矩阵">
+    <rect class="grid" x="78" y="220" width="56" height="56" fill="#eff6ff"/><rect class="grid" x="134" y="220" width="56" height="56" fill="#eff6ff"/><rect class="grid" x="190" y="220" width="56" height="56" fill="#fff7ed"/><rect class="grid" x="246" y="220" width="56" height="56" fill="#fff7ed"/><rect class="grid" x="302" y="220" width="56" height="56" fill="#fff7ed"/>
+    <rect class="grid" x="78" y="276" width="56" height="56" fill="#eff6ff"/><rect class="grid" x="134" y="276" width="56" height="56" fill="#eff6ff"/><rect class="grid" x="190" y="276" width="56" height="56" fill="#fff7ed"/><rect class="grid" x="246" y="276" width="56" height="56" fill="#fff7ed"/><rect class="grid" x="302" y="276" width="56" height="56" fill="#fff7ed"/>
+    <rect class="grid" x="78" y="332" width="56" height="56" fill="#eff6ff"/><rect class="grid" x="134" y="332" width="56" height="56" fill="#eff6ff"/><rect class="grid" x="190" y="332" width="56" height="56" fill="#fff7ed"/><rect class="grid" x="246" y="332" width="56" height="56" fill="#fff7ed"/><rect class="grid" x="302" y="332" width="56" height="56" fill="#fff7ed"/>
+    <rect class="grid" x="78" y="388" width="56" height="56" fill="#eff6ff"/><rect class="grid" x="134" y="388" width="56" height="56" fill="#eff6ff"/><rect class="grid" x="190" y="388" width="56" height="56" fill="#fff7ed"/><rect class="grid" x="246" y="388" width="56" height="56" fill="#fff7ed"/><rect class="grid" x="302" y="388" width="56" height="56" fill="#fff7ed"/>
+    <rect class="grid" x="78" y="444" width="56" height="56" fill="#eff6ff"/><rect class="grid" x="134" y="444" width="56" height="56" fill="#eff6ff"/><rect class="grid" x="190" y="444" width="56" height="56" fill="#fff7ed"/><rect class="grid" x="246" y="444" width="56" height="56" fill="#fff7ed"/><rect class="grid" x="302" y="444" width="56" height="56" fill="#fff7ed"/>
+    <text class="number" x="106" y="248">10</text><text class="number" x="162" y="248">10</text><text class="number" x="218" y="248">200</text><text class="number" x="274" y="248">200</text><text class="number" x="330" y="248">200</text>
+    <text class="number" x="106" y="304">10</text><text class="number" x="162" y="304">10</text><text class="number" x="218" y="304">200</text><text class="number" x="274" y="304">200</text><text class="number" x="330" y="304">200</text>
+    <text class="number" x="106" y="360">10</text><text class="number" x="162" y="360">10</text><text class="number" x="218" y="360">200</text><text class="number" x="274" y="360">200</text><text class="number" x="330" y="360">200</text>
+    <text class="number" x="106" y="416">10</text><text class="number" x="162" y="416">10</text><text class="number" x="218" y="416">200</text><text class="number" x="274" y="416">200</text><text class="number" x="330" y="416">200</text>
+    <text class="number" x="106" y="472">10</text><text class="number" x="162" y="472">10</text><text class="number" x="218" y="472">200</text><text class="number" x="274" y="472">200</text><text class="number" x="330" y="472">200</text>
+    <rect x="78" y="220" width="168" height="168" rx="4" fill="none" stroke="#2563eb" stroke-width="4"/>
+    <rect x="134" y="220" width="168" height="168" rx="4" fill="none" stroke="#d97706" stroke-width="3" stroke-dasharray="10 7"/>
+  </g>
+  <path d="M 106 520 L 161 520" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+  <text x="227" y="553" text-anchor="middle" font-size="17" fill="#2563eb">蓝框：当前位置 (i, j) = (0, 0)</text>
+  <text x="227" y="578" text-anchor="middle" class="note">橙虚线：窗口右移 1 格 → (0, 1)</text>
+
+  <!-- 卷积核 -->
+  <text class="panel-title" x="555" y="155" text-anchor="middle">② 卷积核 K</text>
+  <text class="label" x="555" y="188" text-anchor="middle">3×3 垂直边缘核</text>
+  <g aria-label="三乘三卷积核">
+    <rect class="grid" x="471" y="220" width="56" height="56" fill="#f5f3ff"/><rect class="grid" x="527" y="220" width="56" height="56" fill="#f5f3ff"/><rect class="grid" x="583" y="220" width="56" height="56" fill="#f5f3ff"/>
+    <rect class="grid" x="471" y="276" width="56" height="56" fill="#f5f3ff"/><rect class="grid" x="527" y="276" width="56" height="56" fill="#f5f3ff"/><rect class="grid" x="583" y="276" width="56" height="56" fill="#f5f3ff"/>
+    <rect class="grid" x="471" y="332" width="56" height="56" fill="#f5f3ff"/><rect class="grid" x="527" y="332" width="56" height="56" fill="#f5f3ff"/><rect class="grid" x="583" y="332" width="56" height="56" fill="#f5f3ff"/>
+    <text class="number" x="499" y="248">−1</text><text class="number" x="555" y="248">0</text><text class="number" x="611" y="248">1</text>
+    <text class="number" x="499" y="304">−1</text><text class="number" x="555" y="304">0</text><text class="number" x="611" y="304">1</text>
+    <text class="number" x="499" y="360">−1</text><text class="number" x="555" y="360">0</text><text class="number" x="611" y="360">1</text>
+  </g>
+  <text x="555" y="429" text-anchor="middle" font-size="18" fill="#7c3aed">核决定强调何种结构</text>
+  <rect x="469" y="459" width="172" height="84" rx="12" fill="#f5f3ff" stroke="#ddd6fe"/>
+  <text x="555" y="492" text-anchor="middle" font-size="18">窗口每次移动</text>
+  <text x="555" y="522" text-anchor="middle" font-size="18">仍复用这 9 个权重</text>
+  <text class="note" x="555" y="570" text-anchor="middle">左列负，右列正</text>
+
+  <!-- 当前窗口的乘积和 -->
+  <text class="panel-title" x="823" y="155" text-anchor="middle">③ 局部乘加</text>
+  <text class="label" x="823" y="188" text-anchor="middle">当前窗口：I(0:3, 0:3) ⊙ K</text>
+  <g aria-label="当前窗口与卷积核逐项相乘的结果">
+    <rect class="grid" x="727" y="220" width="64" height="56" fill="#f0fdfa"/><rect class="grid" x="791" y="220" width="64" height="56" fill="#f0fdfa"/><rect class="grid" x="855" y="220" width="64" height="56" fill="#f0fdfa"/>
+    <rect class="grid" x="727" y="276" width="64" height="56" fill="#f0fdfa"/><rect class="grid" x="791" y="276" width="64" height="56" fill="#f0fdfa"/><rect class="grid" x="855" y="276" width="64" height="56" fill="#f0fdfa"/>
+    <rect class="grid" x="727" y="332" width="64" height="56" fill="#f0fdfa"/><rect class="grid" x="791" y="332" width="64" height="56" fill="#f0fdfa"/><rect class="grid" x="855" y="332" width="64" height="56" fill="#f0fdfa"/>
+    <text class="number" x="759" y="248">−10</text><text class="number" x="823" y="248">0</text><text class="number" x="887" y="248">200</text>
+    <text class="number" x="759" y="304">−10</text><text class="number" x="823" y="304">0</text><text class="number" x="887" y="304">200</text>
+    <text class="number" x="759" y="360">−10</text><text class="number" x="823" y="360">0</text><text class="number" x="887" y="360">200</text>
+  </g>
+  <text x="823" y="421" text-anchor="middle" font-size="19">先对应相乘，再把 9 项求和</text>
+  <rect x="711" y="445" width="224" height="93" rx="12" fill="#f0fdfa" stroke="#99f6e4"/>
+  <text x="823" y="477" text-anchor="middle" font-size="18">3×(−10) + 3×0 + 3×200</text>
+  <text x="823" y="518" text-anchor="middle" font-size="28" font-weight="700" fill="#0f766e">= 570</text>
+  <text class="note" x="823" y="570" text-anchor="middle">局部加权和就是当前响应</text>
+
+  <!-- 输出响应矩阵 -->
+  <text class="panel-title" x="1075" y="155" text-anchor="middle">④ 输出 O</text>
+  <text class="label" x="1075" y="188" text-anchor="middle">3×3 响应图</text>
+  <g aria-label="三乘三输出响应矩阵">
+    <text class="index" x="1025" y="208">0</text><text class="index" x="1073" y="208">1</text><text class="index" x="1121" y="208">2</text>
+    <text class="index" x="994" y="244">0</text><text class="index" x="994" y="292">1</text><text class="index" x="994" y="340">2</text>
+    <rect class="grid" x="1001" y="220" width="48" height="48" fill="#ccfbf1"/><rect class="grid" x="1049" y="220" width="48" height="48" fill="#f0fdfa"/><rect class="grid" x="1097" y="220" width="48" height="48" fill="#f0fdfa"/>
+    <rect class="grid" x="1001" y="268" width="48" height="48" fill="#f0fdfa"/><rect class="grid" x="1049" y="268" width="48" height="48" fill="#f0fdfa"/><rect class="grid" x="1097" y="268" width="48" height="48" fill="#f0fdfa"/>
+    <rect class="grid" x="1001" y="316" width="48" height="48" fill="#f0fdfa"/><rect class="grid" x="1049" y="316" width="48" height="48" fill="#f0fdfa"/><rect class="grid" x="1097" y="316" width="48" height="48" fill="#f0fdfa"/>
+    <text x="1025" y="244" class="number" font-weight="700" fill="#0f766e">570</text><text class="number" x="1073" y="244">570</text><text class="number" x="1121" y="244">0</text>
+    <text class="number" x="1025" y="292">570</text><text class="number" x="1073" y="292">570</text><text class="number" x="1121" y="292">0</text>
+    <text class="number" x="1025" y="340">570</text><text class="number" x="1073" y="340">570</text><text class="number" x="1121" y="340">0</text>
+    <rect x="1001" y="220" width="48" height="48" fill="none" stroke="#0f766e" stroke-width="3"/>
+  </g>
+  <text x="1075" y="403" text-anchor="middle" font-size="20" font-weight="700" fill="#0f766e">O(0, 0) = 570</text>
+  <text x="1075" y="442" text-anchor="middle" font-size="17">响应写入窗口</text>
+  <text x="1075" y="469" text-anchor="middle" font-size="17">对应的输出位置</text>
+  <text class="note" x="1075" y="536" text-anchor="middle">每边有效位置数</text>
+  <text x="1075" y="565" text-anchor="middle" font-size="18">5 − 3 + 1 = 3</text>
+
+  <!-- 数据流箭头 -->
+  <path d="M 424 303 L 441 303" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow-gray)"/>
+  <path d="M 666 303 L 683 303" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow-gray)"/>
+  <path d="M 960 303 L 977 303" fill="none" stroke="#0f766e" stroke-width="3" marker-end="url(#arrow-gray)"/>
+  <text x="434" y="280" text-anchor="middle" class="note">对齐</text>
+  <text x="674" y="280" text-anchor="middle" class="note">相乘</text>
+  <text x="969" y="280" text-anchor="middle" class="note">写入</text>
+
+  <!-- 通用坐标关系 -->
+  <rect x="32" y="614" width="1136" height="78" rx="14" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+  <text x="56" y="648" font-size="22" font-weight="700" fill="#1d4ed8">坐标关系：O(i, j) = Σᵤ Σᵥ K(u, v) · I(i+u, j+v)</text>
+  <text x="56" y="678" font-size="18" fill="#475569">窗口按步长滑动 → 在每个位置重复局部乘加 → 将响应写入同一 (i, j) 输出位置</text>
+</svg>
