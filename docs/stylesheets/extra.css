@@ -1,0 +1,22 @@
+.md-typeset img.diagram {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.4rem auto 0.6rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.65rem;
+  box-shadow: 0 0.15rem 0.8rem rgb(0 0 0 / 8%);
+}
+
+.md-typeset .figure-caption {
+  margin: 0 0 1.4rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.md-typeset .figure-source {
+  color: var(--md-default-fg-color--lighter);
+  font-size: 0.75rem;
+}
